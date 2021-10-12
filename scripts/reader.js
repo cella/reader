@@ -1,15 +1,20 @@
 window.onload = function() {
+  var el = null;
   document.body.addEventListener('mouseover', function(e) {
-    $(e.srcElement).addClass('highlight');
+      if(e.target.tagName !== 'BODY' && (e.target.innerText.trim() !== '' || e.target.tagName == "IMG")) {
+        el = e.target;
+        $(e.target).addClass('highlight');
+      }
   });
 
   document.body.addEventListener('mouseout', function(e) {
-    $(e.srcElement).removeClass('highlight');
+    el = null;
+    $(e.target).removeClass('highlight');
     e.stopPropagation();
   });
 
-  document.body.addEventListener('click', function(e) {
-    var el = e.srcElement;
+  document.body.addEventListener('keydown', function(e) {
+    e.preventDefault();
     var text;
     var tagname = el.tagName;
 
@@ -18,9 +23,11 @@ window.onload = function() {
     } else {
       text = $(el).text();
     }
-    var utter = new window.SpeechSynthesisUtterance(text);
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utter);
+    if (e.code === "Space") {
+      var utter = new window.SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
     e.stopPropagation();
   });
 }
